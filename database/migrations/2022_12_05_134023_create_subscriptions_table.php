@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('subscription_user')->references('id')->on('users');
             $table->string('subscription_start');
             $table->string('subscription_expired');
+            $table->integer('subscription_price');
             $table->timestamps();
         });
     }
