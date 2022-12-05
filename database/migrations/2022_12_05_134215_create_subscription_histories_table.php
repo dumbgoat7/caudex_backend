@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('reads', function (Blueprint $table) {
+        Schema::create('subscription_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreign('read_user')->references('id')->on('users');
-            $table->foreign('read_book')->references('id')->on('books');
-            $table->timestamp('read_date');
+            $table->unsignedBigInteger('subscription');
+            $table->foreign('subscription')->references('id')->on('subscriptions');
+            $table->string('subscription_start');
+            $table->string('subscription_expired');
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reads');
+        Schema::dropIfExists('subscription_histories');
     }
 };

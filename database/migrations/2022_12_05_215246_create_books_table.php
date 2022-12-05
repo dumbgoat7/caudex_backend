@@ -17,10 +17,13 @@ return new class extends Migration
             $table->id();
             $table->string('book_title');
             $table->string('book_year');
-            $table->foreign('book_publisher')->references('id')->on('publishers');
-            $table->foreign('book_author')->references('id')->on('authors');
+            $table->unsignedBigInteger('book_publisher');
+            $table->foreign('book_publisher')->references('id')->on('publishers')->onDelete('cascade');;
+            $table->unsignedBigInteger('book_author');
+            $table->foreign('book_author')->references('id')->on('authors')->onDelete('cascade');;
             $table->string('book_file');
-            $table->foreign('book_category')->references('id')->on('categories');
+            $table->unsignedBigInteger('book_category');
+            $table->foreign('book_category')->references('id')->on('categories')->onDelete('cascade');;
             $table->string('book_cover');
             $table->timestamps();
         });

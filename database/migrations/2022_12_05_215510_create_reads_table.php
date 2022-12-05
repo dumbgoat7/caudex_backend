@@ -13,11 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('subscription__histories', function (Blueprint $table) {
+        Schema::create('reads', function (Blueprint $table) {
             $table->id();
-            $table->foreign('subscription')->references('id')->on('subscriptions');
-            $table->string('subscription_start');
-            $table->string('subscription_expired');
+            $table->unsignedBigInteger('read_user');
+            $table->foreign('read_user')->references('id')->on('users')->onDelete('cascade');;
+            $table->unsignedBigInteger('read_book');
+            $table->foreign('read_book')->references('id')->on('books')->onDelete('cascade');;
+            $table->timestamp('read_date');
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('subscription__histories');
+        Schema::dropIfExists('reads');
     }
 };
