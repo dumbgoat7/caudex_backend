@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::get()->latest()->get();
+        $users = User::get();
         return new UserResource(true, 'All Users', $users);
     }
 
@@ -45,28 +45,30 @@ class UserController extends Controller
             'user_email' => 'required',
             'user_password' => 'required',
             'user_role' => 'required',
-            'user_photo' => 'required|image|mimes:png,jpg,jpeg|max:2048'
+            'user_photo' => 'required',
+            'user_birthdate' => 'required',
         ], [
             'name.required' => 'Name must be filled',
             'email.required' => 'Email must be filled',
             'password.required' => 'Password must be filled',
             'user_role.required' => 'Role must be filled',
             'user_photo.required' => 'Please input a photo',
+            'user_birthdate.required' => 'Birthdate must be filled',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
         $input = $request->all();
-  
-        if ($image = $request->file('user_photo')) {
-            $destinationPath = 'images/';
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-            $input['user_photo'] = "$profileImage";
-        }
-    
+
+        // if ($image = $request->file('user_photo')) {
+        //     $destinationPath = 'images/';
+        //     $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+        //     $image->move($destinationPath, $profileImage);
+        //     $input['user_photo'] = "$profileImage";
+        // }
+
         User::create($input);
-        return new UserResource(true, 'Success Add User', $user);
+        return new UserResource(true, 'Success Add User', $input);
     }
 
     /**
@@ -119,16 +121,16 @@ class UserController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $input = $request->all();
-  
+
         if ($image = $request->file('user_photo')) {
             $destinationPath = 'images/';
             $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
             $input['user_photo'] = "$profileImage";
-        }else{
+        } else {
             unset($input['user_photo']);
         }
-    
+
         $user = User::find($id);
         $user->update($input);
         return new UserResource(true, 'Success Update User', $user);
