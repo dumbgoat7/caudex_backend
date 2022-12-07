@@ -44,15 +44,18 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'user_verification  ' => 'datetime',
     ];
-    public function getCreatedAtAttribute(){
+
+    public function getCreatedAtAttribute()
+    {
         if (!is_null($this->attributes['created_at'])) {
             return Carbon::parse($this->attributes['created_at'])->format('Y-m-d H:i:s');
         }
     }
 
-    public function getUpdateAtAttribute(){
+    public function getUpdateAtAttribute()
+    {
         if (!is_null($this->attributes['update_at'])) {
             return Carbon::parse($this->attributes['update_at'])->format('Y-m-d H:i:s');
         }

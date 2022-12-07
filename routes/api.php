@@ -28,3 +28,6 @@ Route::apiResource('/reads', App\Http\Controllers\Api\ReadController::class);
 Route::apiResource('/Reviews', App\Http\Controllers\Api\ReviewController::class);
 Route::apiResource('/Subscribers', App\Http\Controllers\Api\SubscriberController::class);
 Route::apiResource('/subscriptionhistories', App\Http\Controllers\Api\SubscriptionHistoryController::class);
+
+// Route::get('dashboard', [AuthController::class, 'dashboard'])->middleware(['auth', 'is_verify_email']); 
+Route::get('account/verify/{token}', [AuthController::class, 'verifyAccount'])->name('user.verify');
