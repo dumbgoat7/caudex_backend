@@ -13,5 +13,6 @@ class Subscriptions extends Model
         'subscription_user',
         'subscription_start',
         'subscription_expired',
+        'subscription_price',
     ];
 }
