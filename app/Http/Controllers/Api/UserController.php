@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::with(['Role'])->latest()->get();
+        $users = User::get()->latest()->get();
         return new UserResource(true, 'All Users', $users);
     }
 
@@ -41,25 +41,31 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-            'role_id' => 'required',
+            'user_name' => 'required',
+            'user_email' => 'required',
+            'user_password' => 'required',
+            'user_role' => 'required',
+            'user_photo' => 'required|image|mimes:png,jpg,jpeg|max:2048'
         ], [
             'name.required' => 'Name must be filled',
             'email.required' => 'Email must be filled',
             'password.required' => 'Password must be filled',
-            'role_id.required' => 'Role must be filled',
+            'user_role.required' => 'Role must be filled',
+            'user_photo.required' => 'Please input a photo',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-            'role_id' => $request->role_id,
-        ]);
+        $input = $request->all();
+  
+        if ($image = $request->file('user_photo')) {
+            $destinationPath = 'images/';
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+            $input['user_photo'] = "$profileImage";
+        }
+    
+        User::create($input);
         return new UserResource(true, 'Success Add User', $user);
     }
 
@@ -97,26 +103,34 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-            'role_id' => 'required',
+            'user_name' => 'required',
+            'user_email' => 'required',
+            'user_password' => 'required',
+            'user_role' => 'required',
+            'user_photo' => 'required|image|mimes:png,jpg,jpeg|max:2048'
         ], [
             'name.required' => 'Name must be filled',
             'email.required' => 'Email must be filled',
             'password.required' => 'Password must be filled',
-            'role_id.required' => 'Role must be filled',
+            'user_role.required' => 'Role must be filled',
+            'user_photo.required' => 'Please input a photo',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        $input = $request->all();
+  
+        if ($image = $request->file('user_photo')) {
+            $destinationPath = 'images/';
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+            $input['user_photo'] = "$profileImage";
+        }else{
+            unset($input['user_photo']);
+        }
+    
         $user = User::find($id);
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-            'role_id' => $request->role_id,
-        ]);
+        $user->update($input);
         return new UserResource(true, 'Success Update User', $user);
     }
 

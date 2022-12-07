@@ -63,9 +63,9 @@ class AuthorController extends Controller
     {
         $author = Authors::find($id);
         if ($author) {
-            return new AuthorResource(true, 'Author Delete', $author);
+            return new AuthorResource(true, 'Author Found', $author);
         } else {
-            return new AuthorResource(false, 'Author Not Find', null);
+            return new AuthorResource(false, 'Cannot find the Author', null);
         }
     }
 
@@ -92,7 +92,7 @@ class AuthorController extends Controller
         $validator = Validator::make($request->all(), [
             'author_name' => 'required',
         ], [
-            'author_name.required' => 'Nama Penulis tidak boleh kosong',
+            'author_name.required' => 'Author name must be filled',
         ]);
         $author = Authors::find($id);
         if ($validator->fails()) {

@@ -89,7 +89,7 @@ class CategoriesController extends Controller
         $validator = Validator::make($request->all(), [
             'category_name' => 'required',
         ], [
-            'category_name.required' => 'Nama Kategori tidak boleh kosong',
+            'category_name.required' => 'Category name must be filled',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);

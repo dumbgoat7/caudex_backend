@@ -52,10 +52,12 @@ class BookController extends Controller
                         'book_category' => 'required',
                         'book_cover' => 'required',
                 ], [
-                        'book_title.required' => 'Judul Buku tidak boleh kosong',
-                        'book_year.required' => 'Tahun Buku tidak boleh kosong',
-                        'book_author.required' => 'Penulis Buku tidak boleh kosong',
-                        'book_file.required' => 'File Buku tidak boleh kosong',
+                        'book_title.required' => 'Book Title must be filled',
+                        'book_year.required' => 'Release Year must be filled',
+                        'book_author.required' => 'Author must be filled',
+                        'book_file.required' => 'Book File cannot be empty',
+                        'book_category.required' => 'Category must be filled',
+                        'book_cover.required' => 'Book Cover cannot be empty',
                 ]);
 
                 if ($validator->fails()) {
@@ -116,9 +118,12 @@ class BookController extends Controller
                         'book_category' => 'required',
                         'book_cover' => 'required',
                 ], [
-                        'book_title.required' => 'Judul Buku tidak boleh kosong',
-                        'book_year.required' => 'Tahun Buku tidak boleh kosong',
-                        'book_file.required' => 'File Buku tidak boleh kosong',
+                        'book_title.required' => 'Book Title must be filled',
+                        'book_year.required' => 'Release Year must be filled',
+                        'book_author.required' => 'Author must be filled',
+                        'book_file.required' => 'Book File cannot be empty',
+                        'book_category.required' => 'Category must be filled',
+                        'book_cover.required' => 'Book Cover cannot be empty',
                 ]);
                 $book = Books::find($id);
                 if ($validator->fails()) {

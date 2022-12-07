@@ -41,13 +41,17 @@ class ReviewController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'book_id' => 'required',
-            'review' => 'required',
+            'review_user' => 'required',
+            'review_book' => 'required',
+            'review_date' => 'required',
+            'review_rating' => 'required',
+            'review_comment' => 'required',
         ], [
-            'user_id.required' => 'User tidak boleh kosong',
-            'book_id.required' => 'Buku tidak boleh kosong',
-            'review.required' => 'Review tidak boleh kosong',
+            'review_user.required' => 'User must be selected',
+            'review_book.required' => 'Book must be selected',
+            'review_date.required' => 'Date must be selected',
+            'review_rating.required' => 'Rating cannot be empty',
+            'review_comment.required' => 'Comment cannot be empty',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -93,13 +97,17 @@ class ReviewController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'book_id' => 'required',
-            'review' => 'required',
+            'review_user' => 'required',
+            'review_book' => 'required',
+            'review_date' => 'required',
+            'review_rating' => 'required',
+            'review_comment' => 'required',
         ], [
-            'user_id.required' => 'User tidak boleh kosong',
-            'book_id.required' => 'Buku tidak boleh kosong',
-            'review.required' => 'Review tidak boleh kosong',
+            'review_user.required' => 'User must be selected',
+            'review_book.required' => 'Book must be selected',
+            'review_date.required' => 'Date must be selected',
+            'review_rating.required' => 'Rating cannot be empty',
+            'review_comment.required' => 'Comment cannot be empty',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);

@@ -41,20 +41,20 @@ class ReadController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'book_id' => 'required',
+            'read_user' => 'required',
+            'read_book' => 'required',
             'read_date' => 'required',
         ], [
-            'user_id.required' => 'User tidak boleh kosong',
-            'book_id.required' => 'Buku tidak boleh kosong',
+            'read_user.required' => 'User tidak boleh kosong',
+            'read_book.required' => 'Buku tidak boleh kosong',
             'read_date.required' => 'Tanggal tidak boleh kosong',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
         $read = Reads::create([
-            'user_id' => $request->user_id,
-            'book_id' => $request->book_id,
+            'read_user' => $request->user_id,
+            'read_book' => $request->book_id,
             'read_date' => $request->read_date,
         ]);
         return new ReadResource(true, 'Success Add Read', $read);
@@ -93,20 +93,20 @@ class ReadController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'book_id' => 'required',
+            'read_user' => 'required',
+            'read_book' => 'required',
             'read_date' => 'required',
         ], [
-            'user_id.required' => 'User tidak boleh kosong',
-            'book_id.required' => 'Buku tidak boleh kosong',
+            'read_user.required' => 'User tidak boleh kosong',
+            'read_book.required' => 'Buku tidak boleh kosong',
             'read_date.required' => 'Tanggal tidak boleh kosong',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
         $read = Reads::where('id', $id)->update([
-            'user_id' => $request->user_id,
-            'book_id' => $request->book_id,
+            'read_user' => $request->user_id,
+            'read_book' => $request->book_id,
             'read_date' => $request->read_date,
         ]);
         return new ReadResource(true, 'Success Update Read', $read);

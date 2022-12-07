@@ -43,7 +43,7 @@ class PublisherController extends Controller
         $validator = Validator::make($request->all(), [
             'publisher_name' => 'required',
         ], [
-            'publisher_name.required' => 'Nama Penerbit tidak boleh kosong',
+            'publisher_name.required' => 'Publisher name must be filled',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -89,7 +89,7 @@ class PublisherController extends Controller
         $validator = Validator::make($request->all(), [
             'publisher_name' => 'required',
         ], [
-            'publisher_name.required' => 'Nama Penerbit tidak boleh kosong',
+            'publisher_name.required' => 'Publisher name must be filled',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);

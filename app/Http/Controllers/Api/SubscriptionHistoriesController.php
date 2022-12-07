@@ -26,4 +26,15 @@ class SubscriptionHistoriesController extends Controller
                 $subscription_histories = Subscription_Histories::get();
                 return new SubscriptionHistoriesResource(true, 'All Subscription Histories', $subscription_histories);
         }
+
+        public function store(Request $request)
+        {
+                
+                $subscription_histories = Subscription_Histories::create([
+                        'subscription' => $request->subscription,
+                        'subscription_start' => $request->subscription_start,
+                        'subscription_expired' => $request->subscription_expired,
+                ]);
+                return new SubscriptionHistoriesResource(true, 'Success Add Publisher', $publisher);
+        }
 }
