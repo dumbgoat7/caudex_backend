@@ -41,19 +41,19 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-            'role_id' => 'required',
-        ], [
-            'name.required' => 'Name must be filled',
-            'email.required' => 'Email must be filled',
-            'password.required' => 'Password must be filled',
-            'role_id.required' => 'Role must be filled',
+            'user_name' => 'required',
+            'user_birthdate' => 'required',
+            'user_password' => 'required',
+            'user_email' => 'required',
+            'user_role' => 'required',
+            'email_verified_at' => 'required',
+            'user_photo' => 'required',
+            'user_verification' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -97,15 +97,14 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-            'role_id' => 'required',
-        ], [
-            'name.required' => 'Name must be filled',
-            'email.required' => 'Email must be filled',
-            'password.required' => 'Password must be filled',
-            'role_id.required' => 'Role must be filled',
+            'user_name' => 'required',
+            'user_birthdate' => 'required',
+            'user_password' => 'required',
+            'user_email' => 'required',
+            'user_role' => 'required',
+            'email_verified_at' => 'required',
+            'user_photo' => 'required',
+            'user_verification' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);

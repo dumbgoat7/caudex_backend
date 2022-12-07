@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Authors;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\AuthorResource;
+use App\Http\Controllers\Controller;
 
 class AuthorController extends Controller
 {

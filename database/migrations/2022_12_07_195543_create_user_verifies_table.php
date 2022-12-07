@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::dropIfExists('users');
         Schema::table('users', function (Blueprint $table) {
             $table->boolean('user_verification')->default(0);
         });
