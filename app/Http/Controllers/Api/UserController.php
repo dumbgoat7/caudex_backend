@@ -58,6 +58,7 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        $request['user_password'] = bcrypt($request->user_password);
         $input = $request->all();
 
         // if ($image = $request->file('user_photo')) {
