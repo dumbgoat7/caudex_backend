@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('user_name');
             $table->date('user_birthdate');
-            $table->string('user_password');
-            $table->string('user_email');
+            $table->string('password');
+            $table->string('email');
             $table->string('user_role');
             $table->string('user_photo');
             $table->string('user_verification');

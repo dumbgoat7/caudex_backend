@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 use Carbon\carbon;
 
 class User extends Authenticatable
@@ -21,8 +21,8 @@ class User extends Authenticatable
     protected $fillable = [
         'user_name',
         'user_birthdate',
-        'user_password',
-        'user_email',
+        'password',
+        'email',
         'user_role',
         'email_verified_at',
         'user_photo',
@@ -35,7 +35,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'user_password',
+        'password',
         'remember_token',
     ];
 
