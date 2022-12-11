@@ -31,13 +31,8 @@ Route::apiResource('/Subscriptions', App\Http\Controllers\Api\SubscriptionContro
 Route::apiResource('/subscriptionhistories', App\Http\Controllers\Api\SubscriptionHistoriesController::class);
 
 //buat route untuk AuthController
-Route::post('register', [App\Http\Controllers\Api\AuthController::class, 'register']);
-Route::post('login', [App\Http\Controllers\Api\AuthController::class, 'login']);
-Route::get('logout', [App\Http\Controllers\Api\AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::get('user', [App\Http\Controllers\Api\AuthController::class, 'user'])->middleware('auth:sanctum');
-Route::get('dashboard', [App\Http\Controllers\Api\AuthController::class, 'dashboard'])->middleware(['auth:sanctum', 'is_verify_email']);
-Route::get('account/verify/{token}', [App\Http\Controllers\Api\AuthController::class, 'verifyAccount'])->name('user.verify');
-
-
-// Route::get('dashboard', [AuthController::class, 'dashboard'])->middleware(['auth', 'is_verify_email']);
-// Route::get('account/verify/{token}', [AuthController::class, 'verifyAccount'])->name('user.verify');
+Route::post('/login', [App\Http\Controllers\Api\AuthController::class, 'login']);
+Route::post('/register', [App\Http\Controllers\Api\AuthController::class, 'register']);
+Route::post('/logout', [App\Http\Controllers\Api\AuthController::class, 'logout']);
+// Route::post('/refresh', [App\Http\Controllers\Api\AuthController::class, 'refresh']);
+// Route::post('/me', [App\Http\Controllers\Api\AuthController::class, 'me']);

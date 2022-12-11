@@ -10,9 +10,18 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
 use App\Models\UserVerify;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Passport\HasApiTokens;
 
 class AuthController extends Controller
 {
+    use HasApiTokens;
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+    }
+
     public function register(Request $request)
     {
         $registrationData = $request->all();
@@ -23,7 +32,7 @@ class AuthController extends Controller
             'user_password' => 'required',
             'user_email' => 'required|email:rfc,dns|unique:users',
             'user_role' => 'required',
-            'user_photo' => 'required|image:jpeg,png,jpg,gif,svg|max:2048',
+            'user_photo' => 'required',
             'user_verification' => 'required'
         ]);
 
@@ -31,29 +40,20 @@ class AuthController extends Controller
             return response(['message' => $validate->errors()], 400);
         }
 
-        $uploadFolder = 'users';
-        $image = $request->file('user_photo');
-        $image_uploaded_path = $image->store($uploadFolder, 'public');
-        $uploadedImageResponse = basename($image_uploaded_path);
+        // $uploadFolder = 'users';
+        // $image = $request->file('user_photo');
+        // $image_uploaded_path = $image->store($uploadFolder, 'public');
+        // $uploadedImageResponse = basename($image_uploaded_path);
         // "image_url" => Storage::disk('public')->url($image_uploaded_path),
         // "mime" => $image->getClientMimeType()
 
-        $registrationData['user_photo'] = $uploadedImageResponse;
-        $registrationData['user_password'] = bcrypt($request->password);
+        // $registrationData['user_photo'] = $uploadedImageResponse;
+        $registrationData['user_password'] = Hash::make($registrationData['user_password']);
 
         $user = User::create($registrationData);
 
-        $token = $user->createToken('Authentiucation Token')->accessToken;
 
-        Mail::send($user->user_email, ['token' => $token], function ($message) use ($request) {
-            $message->to($request->email);
-            $message->subject('Email Verification Mail');
-        });
-
-        return response([
-            'message' => 'Register Success',
-            'user' => $user
-        ], 200);
+        return new UserResource(true, 'Success Add User', $user);
     }
 
     public function login(Request $request)
@@ -61,47 +61,36 @@ class AuthController extends Controller
         $loginData = $request->all();
 
         $validate = Validator::make($loginData, [
+            'user_password' => 'required',
             'user_email' => 'required|email:rfc,dns',
-            'user_password' => 'required'
         ]);
 
         if ($validate->fails()) {
-            return response(['message' => $validate->error()], 400);
+            return response(['message' => $validate->errors()], 400);
+        }
+        //decrypt password
+        $cek = User::where('user_email', $request->user_email)->first();
+        if ($cek == null) {
+            return response(['message' => 'Email Invalid'], 400);
+        } else {
+            $password = $cek->user_password;
+            if (Hash::check($request->user_password, $password) == false) {
+                return response(['message' => 'Wrong Password'], 400);
+            }
         }
 
-        if (!Auth::attempt($loginData)) {
-            return response(['message' => 'Invalid Credential'], 401);
-        }
+        $user = User::where('user_email', $request->user_email)->first();
+        $token = $user->createToken('authToken')->accessToken;
 
-        /** @var \App\Models\User $user **/
-        $user = Auth::user();
-        $token = $user->createToken('Authentiucation Token')->accessToken;
-
-        return response([
-            'message' => 'Authenticated',
-            'user' => $user,
-            'token_type' => 'Bearer',
-            'access_token' => $token
-        ]);
+        return response(['message' => 'Authenticated', 'user' => $user, 'token_type' => 'Bearer', 'access_token' => $token]);
     }
 
-    // public function logout(Request $request)
-    // {
-    //     $request->user()->token()->revoke();
-
-    //     return response([
-    //         'message' => 'Logged out'
-    //     ], 200);
-    // }
-
-    public function logout()
+    public function logout(Request $request)
     {
-        Session::flush();
-        Auth::logout();
-
-        return response([
-            'message' => 'Logged out'
-        ], 200);
+        $token = $request->user()->token();
+        $token->revoke();
+        $response = ['message' => 'You have been successfully logged out!'];
+        return response($response, 200);
     }
 
     public function verifyAccount($token)
