@@ -76,6 +76,9 @@ class SubscriptionController extends Controller
     public function show($id)
     {
         $subscriptions = Subscriptions::find($id);
+        if(!$subscriptions){
+            return new SubscriptionResource(false, 'Subscription not found', null);
+        }
         return new SubscriptionResource(true, 'Detail Subscription', $subscriptions);
     }
 
@@ -116,7 +119,11 @@ class SubscriptionController extends Controller
             return response()->json(['error' => $validator->errors()], 401);
         }
 
-        $subscriptions = Subscriptions::find($id)->update([
+        $subscriptions = Subscriptions::find($id);
+        if(!$subscriptions){
+            return new SubscriptionResource(false, 'Subscription not found', null);
+        }
+        $subscriptions->update([
             'subscription_user' => $request->user_id,
             'subscription_type' => $request->subscription_type,
             'subscription_start' => $request->subscription_start,
@@ -134,7 +141,11 @@ class SubscriptionController extends Controller
      */
     public function destroy($id)
     {
-        $subscriptions = Subscriptions::find($id)->delete();
+        $subscriptions = Subscriptions::find($id);
+        if(!$subscriptions){
+            return new SubscriptionResource(false, 'Subscription not found', null);
+        }
+        $subscriptions->delete();
         return new SubscriptionResource(true, 'Success Delete Subscription', $subscriptions);
     }
 }

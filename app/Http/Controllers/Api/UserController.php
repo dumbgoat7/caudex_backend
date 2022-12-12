@@ -22,56 +22,6 @@ class UserController extends Controller
         return new UserResource(true, 'All Users', $users);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $users = User::get();
-        return new UserResource(true, 'All Users', $users);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'user_name' => 'required',
-            'user_email' => 'required',
-            'user_password' => 'required',
-            'user_role' => 'required',
-            'user_photo' => 'required',
-            'user_birthdate' => 'required',
-        ], [
-            'name.required' => 'Name must be filled',
-            'email.required' => 'Email must be filled',
-            'password.required' => 'Password must be filled',
-            'user_role.required' => 'Role must be filled',
-            'user_photo.required' => 'Please input a photo',
-            'user_birthdate.required' => 'Birthdate must be filled',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-        $request['user_password'] = bcrypt($request->user_password);
-        $input = $request->all();
-
-        // if ($image = $request->file('user_photo')) {
-        //     $destinationPath = 'images/';
-        //     $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-        //     $image->move($destinationPath, $profileImage);
-        //     $input['user_photo'] = "$profileImage";
-        // }
-
-        User::create($input);
-        return new UserResource(true, 'Success Add User', $input);
-    }
 
     /**
      * Display the specified resource.
@@ -81,20 +31,11 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //buat edit
         $user = User::find($id);
-        return new UserResource(true, 'All Users', $user);
+        if(is_null($user)) {
+            return new UserResource(false, 'User not Found', null);
+        }
+        return new UserResource(true, 'User Found', $user);
     }
 
     /**
@@ -108,15 +49,13 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_name' => 'required',
-            'user_email' => 'required',
-            'user_password' => 'required',
-            'user_role' => 'required',
+            'email' => 'required',
+            'password' => 'required',
             'user_photo' => 'required|image|mimes:png,jpg,jpeg|max:2048'
         ], [
-            'name.required' => 'Name must be filled',
+            'user_name.required' => 'Name must be filled',
             'email.required' => 'Email must be filled',
             'password.required' => 'Password must be filled',
-            'user_role.required' => 'Role must be filled',
             'user_photo.required' => 'Please input a photo',
         ]);
         if ($validator->fails()) {
@@ -134,6 +73,9 @@ class UserController extends Controller
         }
 
         $user = User::find($id);
+        if(is_null($user)) {
+            return new UserResource(false, 'User not Found', null);
+        }
         $user->update($input);
         return new UserResource(true, 'Success Update User', $user);
     }
@@ -147,6 +89,9 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
+        if(is_null($user)) {
+            return new UserResource(false, 'User not Found', null);
+        }
         $user->delete();
         return new UserResource(true, 'Success Delete User', $user);
     }

@@ -57,9 +57,11 @@ class ReviewController extends Controller
             return response()->json($validator->errors(), 422);
         }
         $review = Reviews::create([
-            'user_id' => $request->user_id,
-            'book_id' => $request->book_id,
-            'review' => $request->review,
+            'review_user' => $request->review_user,
+            'review_book' => $request->review_book,
+            'review_date' => $request->review_date,
+            'review_rating' => $request->review_rating,
+            'review_comment' => $request->review_comment,
         ]);
         return new ReviewResource(true, 'Success Add Review', $review);
     }
@@ -72,7 +74,10 @@ class ReviewController extends Controller
      */
     public function show($id)
     {
-        $review = Reviews::with(['User', 'Book'])->where('id', $id)->first();
+        $review = Reviews::find($id);
+        if (is_null($review)) {
+            return new ReviewResource(false, 'Cannot find the Review', null);
+            }
         return new ReviewResource(true, 'Detail Review', $review);
     }
 
@@ -112,10 +117,16 @@ class ReviewController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $review = Reviews::where('id', $id)->update([
-            'user_id' => $request->user_id,
-            'book_id' => $request->book_id,
-            'review' => $request->review,
+        $review = Reviews::find($id);
+        if (is_null($review)) {
+            return new ReviewResource(false, 'Cannot find the Review', null);
+            }
+        $review->update([
+            'review_user' => $request->review_user,
+            'review_book' => $request->review_book,
+            'review_date' => $request->review_date,
+            'review_rating' => $request->review_rating,
+            'review_comment' => $request->review_comment,
         ]);
         return new ReviewResource(true, 'Success Update Review', $review);
     }
@@ -128,7 +139,10 @@ class ReviewController extends Controller
      */
     public function destroy($id)
     {
-        $review = Reviews::where('id', $id)->delete();
+        $review = Reviews::find($id);
+        if (is_null($review)) {
+            return new ReviewResource(false, 'Cannot find the Review', null);
+            }
         return new ReviewResource(true, 'Success Delete Review', $review);
     }
 }

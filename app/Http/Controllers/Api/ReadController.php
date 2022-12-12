@@ -68,7 +68,10 @@ class ReadController extends Controller
      */
     public function show($id)
     {
-        $read = Reads::with(['User', 'Book'])->where('id', $id)->first();
+        $read = Reads::find($id);
+        if (is_null($read)) {
+            return new ReadResource(false, 'Cannot find the Read Log', null);
+            }
         return new ReadResource(true, 'Detail Read', $read);
     }
 
@@ -104,7 +107,11 @@ class ReadController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $read = Reads::where('id', $id)->update([
+        $read = Reads::find($id);
+        if (is_null($read)) {
+            return new ReadResource(false, 'Cannot find the Read Log', null);
+            }
+        $read->update([
             'read_user' => $request->user_id,
             'read_book' => $request->book_id,
             'read_date' => $request->read_date,
@@ -120,7 +127,11 @@ class ReadController extends Controller
      */
     public function destroy($id)
     {
-        $read = Reads::where('id', $id)->delete();
+        $read = $read = Reads::find($id);
+        if (is_null($read)) {
+            return new ReadResource(false, 'Cannot find the Read Log', null);
+            }
+        $read->delete();
         return new ReadResource(true, 'Success Delete Read', $read);
     }
 }

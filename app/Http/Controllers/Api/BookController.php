@@ -86,6 +86,9 @@ class BookController extends Controller
         public function show($id)
         {
                 $book = Books::find($id);
+                if (is_null($book)) {
+                        return new BookResource(false, 'Cannot find the Book', null);
+                }
                 return new BookResource(true, 'Detail Book', $book);
         }
 
@@ -126,6 +129,9 @@ class BookController extends Controller
                         'book_cover.required' => 'Book Cover cannot be empty',
                 ]);
                 $book = Books::find($id);
+                if (is_null($book)) {
+                return new BookResource(false, 'Cannot find the Book', null);
+                }
                 if ($validator->fails()) {
                         return response()->json($validator->errors(), 422);
                 }
@@ -151,6 +157,9 @@ class BookController extends Controller
         public function destroy($id)
         {
                 $book = Books::find($id);
+                if (is_null($book)) {
+                        return new BookResource(false, 'Cannot find the Book', null);
+                }
                 $book->delete();
                 return new BookResource(true, 'Success Delete Book', $book);
         }

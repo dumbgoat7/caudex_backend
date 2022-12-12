@@ -63,6 +63,9 @@ class CategoriesController extends Controller
     public function show($id)
     {
         $categories = Categories::find($id);
+        if (is_null($categories)) {
+            return new CategoriesResource(false, 'Cannot find the Category', null);
+            }
         return new CategoriesResource(true, 'Detail Categories', $categories);
     }
 
@@ -94,7 +97,11 @@ class CategoriesController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $categories = Categories::find($id)->update([
+        $categories = Categories::find($id);
+        if (is_null($categories)) {
+            return new CategoriesResource(false, 'Cannot find the Category', null);
+            }
+        $categories->update([
             'category_name' => $request->category_name,
         ]);
         return new CategoriesResource(true, 'Success Update Categories', $categories);
@@ -108,7 +115,11 @@ class CategoriesController extends Controller
      */
     public function destroy($id)
     {
-        $categories = Categories::find($id)->delete();
+        $categories = Categories::find($id);
+        if (is_null($categories)) {
+            return new CategoriesResource(false, 'Cannot find the Category', null);
+            }
+        $categories->delete();
         return new CategoriesResource(true, 'Success Delete Categories', $categories);
     }
 }

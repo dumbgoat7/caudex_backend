@@ -32,9 +32,15 @@ class SubscriptionHistoriesController extends Controller
                 
                 $subscription_histories = Subscription_Histories::create([
                         'subscription' => $request->subscription,
-                        'subscription_start' => $request->subscription_start,
-                        'subscription_expired' => $request->subscription_expired,
+                        'subscription_start' => $request->subscription->subscription_start,
+                        'subscription_expired' => $request->subscription->subscription_expired,
                 ]);
-                return new SubscriptionHistoriesResource(true, 'Success Add Publisher', $publisher);
+                return new SubscriptionHistoriesResource(true, 'Subscription History Added', $publisher);
+        }
+
+        public function show($id)
+        {
+                $subscription_histories = Subscription_Histories::find($id);
+                return new SubscriptionHistoriesResource(true, 'Subscription History Found', $publisher);
         }
 }

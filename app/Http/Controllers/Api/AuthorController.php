@@ -95,10 +95,14 @@ class AuthorController extends Controller
         ], [
             'author_name.required' => 'Author name must be filled',
         ]);
-        $author = Authors::find($id);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
+        
+        $author = Authors::find($id);
+        if (is_null($author)) {
+            return new AuthorResource(false, 'Cannot find the Author', null);
+            }
         $author->update([
             'author_name' => $request->author_name,
         ]);
@@ -114,6 +118,9 @@ class AuthorController extends Controller
     public function destroy($id)
     {
         $author = Authors::find($id);
+        if (is_null($author)) {
+            return new AuthorResource(false, 'Cannot find the Author', null);
+            }
         $author->delete();
         return new AuthorResource(true, 'Success Delete Author', null);
     }
