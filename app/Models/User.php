@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Carbon\carbon;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -26,7 +26,6 @@ class User extends Authenticatable
         'user_role',
         'email_verified_at',
         'user_photo',
-        'user_verification',
     ];
 
     /**
@@ -45,7 +44,7 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'user_verification  ' => 'datetime',
+        'email_verified_at  ' => 'datetime',
     ];
 
     public function getCreatedAtAttribute()

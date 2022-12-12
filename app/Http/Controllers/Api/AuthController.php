@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Auth\Events\Registered;
 
 class AuthController extends Controller
 {
@@ -23,7 +24,6 @@ class AuthController extends Controller
             'email' => 'required|email:rfc,dns|unique:users',
             'user_role' => 'required',
             'user_photo' => 'required',
-            'user_verification' => 'required'
         ]);
 
         if ($validate->fails()) {
@@ -38,7 +38,11 @@ class AuthController extends Controller
 
         $user = User::create($regintrationData);
 
-        return response(['message' => 'Registration Success', 'user' => $user], 200);
+        event(new Registered($user));
+
+        auth()->login($user);
+
+        return redirect()->route('verification.notice')->with(['message' => 'Registration Success, Please register your email', 'user' => $user], 200);
     }
 
     public function login(Request $request)
@@ -59,9 +63,12 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $request->email)->first();
-        $token = $user->createToken('Authentication Token')->accessToken;
-
-        return response(['message' => 'Authenticated', 'user' => $user, 'token_tyope' => 'Bearer', 'access_token' => $token]);
+        if ($user->email_verified_at == null) {
+            return response(['message' => 'Please verify your email'], 401);
+        } else {
+            $token = $user->createToken('Authentication Token')->accessToken;
+            return response(['message' => 'Authenticated', 'user' => $user, 'token_tyope' => 'Bearer', 'access_token' => $token]);
+        }
     }
 
     //logout dan hapus token

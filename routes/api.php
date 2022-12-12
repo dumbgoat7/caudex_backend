@@ -36,5 +36,6 @@ Route::group(['middleware' => 'auth:api'], function () {
 Route::post('/login', [App\Http\Controllers\Api\AuthController::class, 'login']);
 Route::post('/register', [App\Http\Controllers\Api\AuthController::class, 'register']);
 Route::middleware('auth:api')->post('logout', 'Api\AuthController@logout');
-// Route::post('/refresh', [App\Http\Controllers\Api\AuthController::class, 'refresh']);
-// Route::post('/me', [App\Http\Controllers\Api\AuthController::class, 'me']);
+
+Route::get('/email/verify/need-verification', [App\Http\Controllers\Api\VerificationController::class, 'notice'])->name('verification.notice');
+Route::get('/email/verify/{id}', [App\Http\Controllers\Api\VerificationController::class, 'verify'])->name('verification.verify');

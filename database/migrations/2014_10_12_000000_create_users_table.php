@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('user_role');
             $table->string('user_photo');
-            $table->string('user_verification');
+            $table->dateTime('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

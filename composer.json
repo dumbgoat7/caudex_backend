@@ -11,7 +11,8 @@
         "laravel/framework": "^9.0",
         "laravel/passport": "^11.3",
         "laravel/sanctum": "^2.14",
-        "laravel/tinker": "^2.7"
+        "laravel/tinker": "^2.7",
+        "symfony/mime": "^6.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
