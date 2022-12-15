@@ -32,7 +32,7 @@ class UserController extends Controller
     public function show($id)
     {
         $user = User::find($id);
-        if(is_null($user)) {
+        if (is_null($user)) {
             return new UserResource(false, 'User not Found', null);
         }
         return new UserResource(true, 'User Found', $user);
@@ -73,7 +73,7 @@ class UserController extends Controller
         }
 
         $user = User::find($id);
-        if(is_null($user)) {
+        if (is_null($user)) {
             return new UserResource(false, 'User not Found', null);
         }
         $user->update($input);
@@ -89,7 +89,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
-        if(is_null($user)) {
+        if (is_null($user)) {
             return new UserResource(false, 'User not Found', null);
         }
         $user->delete();

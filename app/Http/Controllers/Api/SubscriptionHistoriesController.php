@@ -29,18 +29,18 @@ class SubscriptionHistoriesController extends Controller
 
         public function store(Request $request)
         {
-                
+
                 $subscription_histories = Subscription_Histories::create([
                         'subscription' => $request->subscription,
                         'subscription_start' => $request->subscription->subscription_start,
                         'subscription_expired' => $request->subscription->subscription_expired,
                 ]);
-                return new SubscriptionHistoriesResource(true, 'Subscription History Added', $publisher);
+                return new SubscriptionHistoriesResource(true, 'Subscription History Added', $subscription_histories);
         }
 
         public function show($id)
         {
                 $subscription_histories = Subscription_Histories::find($id);
-                return new SubscriptionHistoriesResource(true, 'Subscription History Found', $publisher);
+                return new SubscriptionHistoriesResource(true, 'Subscription History Found', $subscription_histories);
         }
 }

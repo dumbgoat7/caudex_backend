@@ -23,16 +23,16 @@ class AuthController extends Controller
             'password' => 'required',
             'email' => 'required|email:rfc,dns|unique:users',
             'user_role' => 'required',
-            'user_photo' => 'required',
+            'user_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         if ($validate->fails()) {
             return response(['message' => $validate->errors()], 400);
         }
 
-        // $imageName = $request->file('image')->getClientOriginalName();
-        // $request->image->move(public_path('images'), $imageName);
-        // $regintrationData['image'] = $imageName;
+        $imageName = $request->file('user_photo')->getClientOriginalName();
+        $request->user_photo->move(public_path('images'), $imageName);
+        $regintrationData['user_photo'] = $imageName;
 
         $regintrationData['password'] = bcrypt($request->password);
 

@@ -39,3 +39,8 @@ Route::middleware('auth:api')->post('logout', 'Api\AuthController@logout');
 
 Route::get('/email/verify/need-verification', [App\Http\Controllers\Api\VerificationController::class, 'notice'])->name('verification.notice');
 Route::get('/email/verify/{id}', [App\Http\Controllers\Api\VerificationController::class, 'verify'])->name('verification.verify');
+
+//buat route untuk akses gambar dari public
+Route::get('/image/{filename}', [App\Http\Controllers\Api\ImageController::class, 'getImage']);
+//buat route untuk akses file pdf dari public
+Route::get('/pdf/{filename}', [App\Http\Controllers\Api\PdfController::class, 'getPdf']);

@@ -43,37 +43,28 @@ class BookController extends Controller
          */
         public function store(Request $request)
         {
+                $storeBook = $request->all();
                 $validator = Validator::make($request->all(), [
                         'book_title' => 'required',
                         'book_year' => 'required',
                         'book_publisher' => 'required',
                         'book_author' => 'required',
-                        'book_file' => 'required',
+                        'book_file' => 'required|mimes:pdf|min:10.240',
                         'book_category' => 'required',
-                        'book_cover' => 'required',
-                ], [
-                        'book_title.required' => 'Book Title must be filled',
-                        'book_year.required' => 'Release Year must be filled',
-                        'book_author.required' => 'Author must be filled',
-                        'book_file.required' => 'Book File cannot be empty',
-                        'book_category.required' => 'Category must be filled',
-                        'book_cover.required' => 'Book Cover cannot be empty',
+                        'book_cover' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 ]);
 
                 if ($validator->fails()) {
                         return response()->json($validator->errors(), 422);
                 }
+                $imageName = $request->file('book_cover')->getClientOriginalName();
+                $request->book_cover->move(public_path('images'), $imageName);
+                $storeBook['book_cover'] = $imageName;
+                $pdfName = $request->file('book_file')->getClientOriginalName();
+                $request->book_file->move(public_path('pdf'), $pdfName);
+                $storeBook['book_file'] = $pdfName;
 
-                $book = Books::create([
-                        'book_title' => $request->book_title,
-                        'book_year' => $request->book_year,
-                        'book_publisher' => $request->book_publisher,
-                        'book_author' => $request->book_author,
-                        'book_file' => $request->book_file,
-                        'book_category' => $request->book_category,
-                        'book_cover' => $request->book_cover,
-
-                ]);
+                $book = Books::create($storeBook);
                 return new BookResource(true, 'Success Add Book', $book);
         }
 
@@ -112,39 +103,32 @@ class BookController extends Controller
          */
         public function update(Request $request, $id)
         {
+                $updateBook = Books::find($id);
                 $validator = Validator::make($request->all(), [
                         'book_title' => 'required',
                         'book_year' => 'required',
                         'book_publisher' => 'required',
                         'book_author' => 'required',
-                        'book_file' => 'required',
+                        'book_author' => 'required',
+                        'book_file' => 'required|mimes:pdf|max:10.240',
                         'book_category' => 'required',
-                        'book_cover' => 'required',
-                ], [
-                        'book_title.required' => 'Book Title must be filled',
-                        'book_year.required' => 'Release Year must be filled',
-                        'book_author.required' => 'Author must be filled',
-                        'book_file.required' => 'Book File cannot be empty',
-                        'book_category.required' => 'Category must be filled',
-                        'book_cover.required' => 'Book Cover cannot be empty',
+                        'book_cover' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 ]);
                 $book = Books::find($id);
                 if (is_null($book)) {
-                return new BookResource(false, 'Cannot find the Book', null);
+                        return new BookResource(false, 'Cannot find the Book', null);
                 }
                 if ($validator->fails()) {
                         return response()->json($validator->errors(), 422);
                 }
+                $imageName = $request->file('book_cover')->getClientOriginalName();
+                $request->book_cover->move(public_path('images'), $imageName);
+                $storeBook['book_cover'] = $imageName;
+                $pdfName = $request->file('book_file')->getClientOriginalName();
+                $request->book_file->move(public_path('pdf'), $pdfName);
+                $storeBook['book_file'] = $pdfName;
 
-                $book->update([
-                        'book_title' => $request->book_title,
-                        'book_year' => $request->book_year,
-                        'book_publisher' => $request->book_publisher,
-                        'book_author' => $request->book_author,
-                        'book_file' => $request->book_file,
-                        'book_category' => $request->book_category,
-                        'book_cover' => $request->book_cover,
-                ]);
+                $book->update($updateBook);
                 return new BookResource(true, 'Success Update Book', $book);
         }
 

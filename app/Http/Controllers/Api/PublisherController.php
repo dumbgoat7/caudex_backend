@@ -42,15 +42,12 @@ class PublisherController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'publisher_name' => 'required',
-        ], [
-            'publisher_name.required' => 'Publisher name must be filled',
+            'publisher_country' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $publisher = Publishers::create([
-            'publisher_name' => $request->publisher_name,
-        ]);
+        $publisher = Publishers::create($request->all());
         return new PublisherResource(true, 'Success Add Publisher', $publisher);
     }
 
@@ -65,7 +62,7 @@ class PublisherController extends Controller
         $publisher = Publishers::find($id);
         if (is_null($publisher)) {
             return new PublisherResource(false, 'Cannot find the Publisher', null);
-            }
+        }
         return new PublisherResource(true, 'Detail Publisher', $publisher);
     }
 
@@ -89,10 +86,10 @@ class PublisherController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $publish = Publishers::find($id);
         $validator = Validator::make($request->all(), [
             'publisher_name' => 'required',
-        ], [
-            'publisher_name.required' => 'Publisher name must be filled',
+            'publisher_country' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
@@ -100,10 +97,8 @@ class PublisherController extends Controller
         $publisher = Publishers::find($id);
         if (is_null($publisher)) {
             return new PublisherResource(false, 'Cannot find the Publisher', null);
-            }
-        $publisher->update([
-            'publisher_name' => $request->publisher_name,
-        ]);
+        }
+        $publisher->update($publish);
         return new PublisherResource(true, 'Success Update Publisher', $publisher);
     }
 
@@ -118,7 +113,7 @@ class PublisherController extends Controller
         $publisher = Publishers::find($id);
         if (is_null($publisher)) {
             return new PublisherResource(false, 'Cannot find the Publisher', null);
-            }
+        }
         $publisher->delete();
         return new PublisherResource(true, 'Success Delete Publisher', $publisher);
     }
