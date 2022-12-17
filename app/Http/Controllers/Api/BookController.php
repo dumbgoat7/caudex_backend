@@ -43,6 +43,9 @@ class BookController extends Controller
          */
         public function store(Request $request)
         {
+                if ($request->id != null) {
+                        return $this->update($request, $request->id);
+                }
                 $storeBook = $request->all();
                 $validator = Validator::make($request->all(), [
                         'book_title' => 'required',
@@ -121,13 +124,17 @@ class BookController extends Controller
                 if ($validator->fails()) {
                         return response()->json($validator->errors(), 422);
                 }
-                $imageName = $request->file('book_cover')->getClientOriginalName();
-                $request->book_cover->move(public_path('images'), $imageName);
-                $storeBook['book_cover'] = $imageName;
-                $pdfName = $request->file('book_file')->getClientOriginalName();
-                $request->book_file->move(public_path('pdf'), $pdfName);
-                $storeBook['book_file'] = $pdfName;
 
+                if ($book['book_cover'] != $request->book_cover) {
+                        $imageName = $request->file('book_cover')->getClientOriginalName();
+                        $request->book_cover->move(public_path('images'), $imageName);
+                        $book['book_cover'] = $imageName;
+                }
+                if ($book['book_file'] != $request->book_file) {
+                        $pdfName = $request->file('book_file')->getClientOriginalName();
+                        $request->book_file->move(public_path('pdf'), $pdfName);
+                        $book['book_file'] = $pdfName;
+                }
                 $book->update($updateBook);
                 return new BookResource(true, 'Success Update Book', $book);
         }

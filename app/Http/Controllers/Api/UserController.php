@@ -45,38 +45,52 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-            'user_photo' => 'required|image|mimes:png,jpg,jpeg|max:2048'
-        ], [
-            'user_name.required' => 'Name must be filled',
-            'email.required' => 'Email must be filled',
-            'password.required' => 'Password must be filled',
-            'user_photo.required' => 'Please input a photo',
+            'user_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        $input = $request->all();
+        //masuk ke method update
+        return $this->update($request, $request->id);
+    }
 
-        if ($image = $request->file('user_photo')) {
-            $destinationPath = 'images/';
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-            $input['user_photo'] = "$profileImage";
-        } else {
-            unset($input['user_photo']);
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_photo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
+        $input = $request->all();
+
         $user = User::find($id);
+
         if (is_null($user)) {
             return new UserResource(false, 'User not Found', null);
         }
-        $user->update($input);
+
+        $image = $request->user_photo;
+        if ($image != $user->user_photo) {
+            $imageName = $request->file('user_photo')->getClientOriginalName();
+            $request->user_photo->move(public_path('images'), $imageName);
+            $input['user_photo'] = "$imageName";
+            $user->user_photo = $input['user_photo'];
+        }
+
+        if ($request->password != null) {
+            $input['password'] = bcrypt($request->password);
+            $user->password = $input['password'];
+        }
+
+        $user->save();
+
         return new UserResource(true, 'Success Update User', $user);
     }
 

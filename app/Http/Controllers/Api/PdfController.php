@@ -16,10 +16,12 @@ class PdfController extends Controller
                 'message' => 'File not found'
             ], 404);
         }
+
         header('Content-type:application/pdf');
         header('Content-disposition: inline; filename="' . $filename . '"');
         header('content-Transfer-Encoding:binary');
         header('Accept-Ranges:bytes');
         @readfile($path);
+        // @readfile($path);
     }
 }
