@@ -42,7 +42,7 @@ class AuthController extends Controller
 
         auth()->login($user);
 
-        return redirect()->route('verification.notice')->with(['message' => 'Registration Success, Please register your email', 'user' => $user], 200);
+        return response(['message' => 'Registration Success, Please register your email', 'user' => $user], 200);
     }
 
     public function login(Request $request)
