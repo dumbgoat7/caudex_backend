@@ -10,10 +10,10 @@ class Reviews extends Model
     use HasFactory;
 
     protected $fillable = [
-        'review_user',
-        'review_book',
-        'review_date',
-        'review_rating',
-        'review_comment',
+        'reviews_user',
+        'reviews_book',
+        'reviews_date',
+        'reviews_rating',
+        'reviews_comment',
     ];
 }

@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\SubscriptionResource;
+use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class SubscriptionController extends Controller
 {
@@ -17,7 +19,10 @@ class SubscriptionController extends Controller
      */
     public function index()
     {
-        $subscriptions = Subscriptions::with(['User'])->latest()->get();
+        $subscriptions = DB::table('subscriptions')
+            ->join('users', 'users.id', '=', 'subscriptions.subscription_user')
+            ->select('subscriptions.*', 'users.user_name')
+            ->get();
         return new SubscriptionResource(true, 'All Subscriptions', $subscriptions);
     }
 
@@ -46,24 +51,13 @@ class SubscriptionController extends Controller
             'subscription_start' => 'required|date',
             'subscription_expired' => 'required|date|after:subscription_start',
             'subscription_price' => 'required|numeric',
-        ], [
-            'subscription_user.required' => 'User must be filled',
-            'subscription_type.required' => 'Subscription type must be filled',
-            'subscription_expired.after' => 'Expired date must be a date after start date',
-
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()], 401);
         }
 
-        $subscriptions = Subscriptions::create([
-            'subscription_user' => $request->user_id,
-            'subscription_type' => $request->subscription_type,
-            'subscription_start' => $request->subscription_start,
-            'subscription_expired' => $request->subscription_expired,
-            'subscription_price' => $request->subscription_price,
-        ]);
+        $subscriptions = Subscriptions::create($request->all());
         return new SubscriptionResource(true, 'Success Add Subscription', $subscriptions);
     }
 
@@ -76,7 +70,7 @@ class SubscriptionController extends Controller
     public function show($id)
     {
         $subscriptions = Subscriptions::find($id);
-        if(!$subscriptions){
+        if (!$subscriptions) {
             return new SubscriptionResource(false, 'Subscription not found', null);
         }
         return new SubscriptionResource(true, 'Detail Subscription', $subscriptions);
@@ -103,16 +97,9 @@ class SubscriptionController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'subscription_user' => 'required',
-            'subscription_type' => 'required',
-            'subscription_start' => 'required|date',
+            'subscription_start' => 'required|date|after:yesterday',
             'subscription_expired' => 'required|date|after:subscription_start',
             'subscription_price' => 'required|numeric',
-        ], [
-            'subscription_user.required' => 'User must be filled',
-            'subscription_type.required' => 'Subscription type must be filled',
-            'subscription_expired.after' => 'Expired date must be a date after start date',
-
         ]);
 
         if ($validator->fails()) {
@@ -120,12 +107,10 @@ class SubscriptionController extends Controller
         }
 
         $subscriptions = Subscriptions::find($id);
-        if(!$subscriptions){
+        if (!$subscriptions) {
             return new SubscriptionResource(false, 'Subscription not found', null);
         }
         $subscriptions->update([
-            'subscription_user' => $request->user_id,
-            'subscription_type' => $request->subscription_type,
             'subscription_start' => $request->subscription_start,
             'subscription_expired' => $request->subscription_expired,
             'subscription_price' => $request->subscription_price,
@@ -142,7 +127,7 @@ class SubscriptionController extends Controller
     public function destroy($id)
     {
         $subscriptions = Subscriptions::find($id);
-        if(!$subscriptions){
+        if (!$subscriptions) {
             return new SubscriptionResource(false, 'Subscription not found', null);
         }
         $subscriptions->delete();

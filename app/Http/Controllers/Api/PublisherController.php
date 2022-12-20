@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\PublisherResource;
+use Illuminate\Support\Facades\DB;
 
 class PublisherController extends Controller
 {
@@ -17,7 +18,9 @@ class PublisherController extends Controller
      */
     public function index()
     {
-        $publisher = Publishers::latest()->get();
+        $publisher = DB::table('publishers')
+            ->select(DB::raw('publisher_name as text'), DB::raw('id as value'))
+            ->get();
         return new PublisherResource(true, 'All Publishers', $publisher);
     }
 

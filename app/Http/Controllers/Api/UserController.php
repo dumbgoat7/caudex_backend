@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\UserResource;
-
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -35,7 +35,16 @@ class UserController extends Controller
         if (is_null($user)) {
             return new UserResource(false, 'User not Found', null);
         }
+
         return new UserResource(true, 'User Found', $user);
+    }
+
+    public function getUser()
+    {
+        $user = DB::table('users')
+            ->select(DB::raw('user_name as text'), DB::raw('id as value'))
+            ->get();
+        return new UserResource(true, 'All Users', $user);
     }
 
     /**
@@ -47,6 +56,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
             'user_photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -108,5 +118,15 @@ class UserController extends Controller
         }
         $user->delete();
         return new UserResource(true, 'Success Delete User', $user);
+    }
+
+    public function count()
+    {
+        // SELECT DATE_FORMAT(created_at, "%Y-%m-%d") AS 'date', COUNT(*) AS 'num' FROM users GROUP BY DATE_FORMAT(created_at, "%Y-%m-%d")
+        $user = DB::table('users')
+            ->select(DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d") AS date'), DB::raw('COUNT(*) AS num'))
+            ->groupBy(DB::raw('DATE_FORMAT(created_at, "%Y-%m-%d")'))
+            ->get();
+        return new UserResource(true, 'All Users', $user);
     }
 }

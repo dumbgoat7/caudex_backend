@@ -43,4 +43,6 @@ Route::get('/email/verify/{id}', [App\Http\Controllers\Api\VerificationControlle
 //buat route untuk akses gambar dari public
 Route::get('/image/{filename}', [App\Http\Controllers\Api\ImageController::class, 'getImage']);
 //buat route untuk akses file pdf dari public
-Route::get('/pdf/{filename}', [App\Http\Controllers\Api\PdfController::class, 'getPdf']);
+Route::get('/pdf/{filename}/{idUser}/{idBuku}', [App\Http\Controllers\Api\PdfController::class, 'getPdf']);
+Route::middleware('auth:api')->get('/user', [App\Http\Controllers\Api\UserController::class, 'getUser']);
+Route::middleware('auth:api')->get('/count', [App\Http\Controllers\Api\UserController::class, 'count']);

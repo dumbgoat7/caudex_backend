@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\AuthorResource;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class AuthorController extends Controller
 {
@@ -17,7 +18,9 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        $author = Authors::latest()->get();
+        $author = DB::table('authors')
+            ->select(DB::raw('author_name as text'), DB::raw('id as value'))
+            ->get();
         return new AuthorResource(true, 'All Authors', $author);
     }
 
@@ -98,11 +101,11 @@ class AuthorController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-        
+
         $author = Authors::find($id);
         if (is_null($author)) {
             return new AuthorResource(false, 'Cannot find the Author', null);
-            }
+        }
         $author->update([
             'author_name' => $request->author_name,
         ]);
@@ -120,7 +123,7 @@ class AuthorController extends Controller
         $author = Authors::find($id);
         if (is_null($author)) {
             return new AuthorResource(false, 'Cannot find the Author', null);
-            }
+        }
         $author->delete();
         return new AuthorResource(true, 'Success Delete Author', null);
     }

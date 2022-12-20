@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\CategoriesResource;
+use Illuminate\Support\Facades\DB;
 
 class CategoriesController extends Controller
 {
@@ -17,7 +18,9 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        $categories = Categories::latest()->get();
+        $categories = DB::table('categories')
+            ->select(DB::raw('category_name as text'), DB::raw('id as value'))
+            ->get();
         return new CategoriesResource(true, 'All Categories', $categories);
     }
 
@@ -65,7 +68,7 @@ class CategoriesController extends Controller
         $categories = Categories::find($id);
         if (is_null($categories)) {
             return new CategoriesResource(false, 'Cannot find the Category', null);
-            }
+        }
         return new CategoriesResource(true, 'Detail Categories', $categories);
     }
 
@@ -100,7 +103,7 @@ class CategoriesController extends Controller
         $categories = Categories::find($id);
         if (is_null($categories)) {
             return new CategoriesResource(false, 'Cannot find the Category', null);
-            }
+        }
         $categories->update([
             'category_name' => $request->category_name,
         ]);
@@ -118,7 +121,7 @@ class CategoriesController extends Controller
         $categories = Categories::find($id);
         if (is_null($categories)) {
             return new CategoriesResource(false, 'Cannot find the Category', null);
-            }
+        }
         $categories->delete();
         return new CategoriesResource(true, 'Success Delete Categories', $categories);
     }

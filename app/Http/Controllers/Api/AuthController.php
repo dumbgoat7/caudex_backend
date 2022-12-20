@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Subscriptions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -66,8 +67,14 @@ class AuthController extends Controller
         if ($user->email_verified_at == null) {
             return response(['message' => 'Please verify your email'], 401);
         } else {
+            $subscriptions = Subscriptions::where('subscription_user', $user->id)->first();
+            if ($subscriptions == null) {
+                $user['user_membership'] = false;
+            } else {
+                $user['user_membership'] = !(strtotime($subscriptions->subscription_expired) < strtotime(date("Y-m-d")));
+            }
             $token = $user->createToken('Authentication Token')->accessToken;
-            return response(['message' => 'Authenticated', 'user' => $user, 'token_tyope' => 'Bearer', 'access_token' => $token]);
+            return response(['message' => 'Authenticated', 'user' => $user, 'token_type' => 'Bearer', 'access_token' => $token]);
         }
     }
 
